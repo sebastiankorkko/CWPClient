@@ -4,4 +4,9 @@
     <string name="changeButtonText">Change</string>
     <string name="serverUrlLabel">Server URL:</string>
     <string name="serverUrlHint">Server URL (IP:port)</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="textOn">Disconnect</string>
+    <string name="textOff">Connect</string>
 </resources>

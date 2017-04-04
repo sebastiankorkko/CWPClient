@@ -1,5 +1,7 @@
 package com.korkkosebastian.cwpclient;
 
+import java.util.Observer;
+import java.util.Observable;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,9 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-public class TappingFragment extends Fragment implements View.OnTouchListener {
+import com.korkkosebastian.cwpclient.model.CWPMessaging;
+
+public class TappingFragment extends Fragment implements View.OnTouchListener, Observer  {
 
     private ImageView buttonImage;
+    private CWPMessaging cwpMessaging;
 
     public TappingFragment() {
     }
@@ -49,10 +54,20 @@ public class TappingFragment extends Fragment implements View.OnTouchListener {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        CWPProvider cwpProvider = (CWPProvider) getActivity();
+        cwpMessaging = cwpProvider.getMessaging();
+        cwpMessaging.addObserver(this);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        cwpMessaging.deleteObserver(this);
+        cwpMessaging = null;
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+
     }
 }
