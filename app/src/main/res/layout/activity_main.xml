@@ -6,13 +6,46 @@
     android:layout_height="match_parent"
     tools:context="com.korkkosebastian.cwpclient.MainActivity">
 
-    <TextView
+    <fragment
+        android:id="@+id/frequency_fragment"
+        android:name="com.korkkosebastian.cwpclient.FrequencyFragment"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        tools:layout="@layout/frequency_fragment"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        />
+
+    <fragment
+        android:id="@+id/connection_fragment"
+        android:name="com.korkkosebastian.cwpclient.ConnectionFragment"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        tools:layout="@layout/connection_fragment"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        />
+
+    <fragment
+        android:id="@+id/fragment4"
+        android:name="com.korkkosebastian.cwpclient.TappingFragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        tools:layout="@layout/tapping_fragment"
+        app:layout_constraintTop_toBottomOf="@+id/frequency_fragment"
+        app:layout_constraintBottom_toTopOf="@+id/connection_fragment"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
 
 </android.support.constraint.ConstraintLayout>

@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">CWP Client</string>
+    <string name="frequencyLabel">Frequency:</string>
+    <string name="changeButtonText">Change</string>
+    <string name="serverUrlLabel">Server URL:</string>
+    <string name="serverUrlHint">Server URL (IP:port)</string>
 </resources>
