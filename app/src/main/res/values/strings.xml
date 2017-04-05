@@ -5,8 +5,40 @@
     <string name="serverUrlLabel">Server URL:</string>
     <string name="serverUrlHint">Server URL (IP:port)</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="textOn">Disconnect</string>
     <string name="textOff">Connect</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+
+    <string name="pref_server_address_title">Server address</string>
+    <string name="pref_server_address_default">cwp.opimobi.com:20000</string>
+
+    <string name="pref_frequency_title">Default frequency</string>
+    <string name="pref_frequency_default">-1</string>
+
+    <!-- Example General settings -->
+    <string name="pref_header_general">General</string>
+
+    <string name="pref_title_social_recommendations">Enable social recommendations</string>
+    <string name="pref_description_social_recommendations">Recommendations for people to contact
+        based on your message history
+    </string>
+
+    <string name="pref_title_display_name">Display name</string>
+    <string name="pref_default_display_name">John Smith</string>
+
+    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
+    <string name="action_settings_title">Settings</string>
+    <string-array name="pref_example_list_titles">
+        <item>Always</item>
+        <item>When possible</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_example_list_values">
+        <item>1</item>
+        <item>0</item>
+        <item>-1</item>
+    </string-array>
 </resources>

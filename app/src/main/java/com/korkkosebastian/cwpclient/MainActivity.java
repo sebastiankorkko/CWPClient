@@ -1,7 +1,9 @@
 package com.korkkosebastian.cwpclient;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 
 import com.korkkosebastian.cwpclient.cwprotocol.CWPControl;
 import com.korkkosebastian.cwpclient.model.CWPMessaging;
@@ -32,5 +34,24 @@ public class MainActivity extends AppCompatActivity implements CWPProvider {
     @Override
     public CWPControl getControl() {
         return cwpModel;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(android.view.Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.action_settings:
+                Intent intent = new Intent(this, SettingsActivity.class);
+                this.startActivity(intent);
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+        return true;
     }
 }

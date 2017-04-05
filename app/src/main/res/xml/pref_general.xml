@@ -1,0 +1,17 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:title="@string/pref_server_address_title"
+        android:defaultValue="@string/pref_server_address_default"
+        android:inputType="textUri"
+        android:singleLine="true"
+     />
+
+    <EditTextPreference
+        android:title="@string/pref_frequency_title"
+        android:defaultValue="@string/pref_frequency_default"
+        android:inputType="number"
+        android:singleLine="true"
+        />
+
+</PreferenceScreen>
