@@ -35,6 +35,7 @@
     <string name="server_address">server_address</string>
     <string name="pref_server_address_summary">The CWP server address used</string>
     <string name="pref_default_frequency_summary">Default frequency for the client</string>
+    <string name="connecting_cwp">Connecting...</string>
     <string-array name="pref_example_list_titles">
         <item>Always</item>
         <item>When possible</item>

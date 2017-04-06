@@ -1,5 +1,6 @@
 package com.korkkosebastian.cwpclient;
 
+import java.io.IOException;
 import java.util.Observer;
 import java.util.Observable;
 import android.content.Context;
@@ -34,12 +35,20 @@ public class TappingFragment extends Fragment implements View.OnTouchListener, O
 
     public boolean onTouch(View v, MotionEvent event) {
         if(event.getAction() == MotionEvent.ACTION_UP) {
-            buttonImage.setImageResource(R.mipmap.hal9000_down);
+            try {
+                cwpMessaging.lineUp();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             return true;
         }
 
         if(event.getAction() == MotionEvent.ACTION_DOWN) {
-            buttonImage.setImageResource(R.mipmap.hal9000_up);
+            try {
+                cwpMessaging.lineDown();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             return true;
         }
 
@@ -68,6 +77,11 @@ public class TappingFragment extends Fragment implements View.OnTouchListener, O
 
     @Override
     public void update(Observable o, Object arg) {
-
+        if(cwpMessaging.lineIsUp()) {
+            buttonImage.setImageResource(R.mipmap.hal9000_up);
+        }
+        if(!cwpMessaging.lineIsUp()) {
+            buttonImage.setImageResource(R.mipmap.hal9000_down);
+        }
     }
 }

@@ -9,11 +9,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.korkkosebastian.cwpclient.cwprotocol.CWPControl;
 import com.korkkosebastian.cwpclient.model.CWPMessaging;
 
+import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -57,15 +59,30 @@ public class ControlFragment extends Fragment implements View.OnClickListener, O
 
     @Override
     public void update(Observable o, Object arg) {
-
+        if(!cwpControl.isConnected()) {
+            toggleButton.setText("Disconnect");
+        } else {
+            toggleButton.setText("Connect");
+        }
     }
 
     @Override
     public void onClick(View v) {
         if(toggleButton.isChecked()) {
-           toggleButton.setText("Disconnect");
+           //connect
+            try {
+                cwpControl.connect("address", 5, 5);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         } else {
-            toggleButton.setText("Connect");
+            try {
+                cwpControl.disconnect();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
+
+
 }

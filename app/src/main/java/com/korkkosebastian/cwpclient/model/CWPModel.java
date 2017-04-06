@@ -1,59 +1,48 @@
 package com.korkkosebastian.cwpclient.model;
 
 import com.korkkosebastian.cwpclient.cwprotocol.CWPControl;
+import com.korkkosebastian.cwpclient.cwprotocol.CWPProtocolImplementation;
+import com.korkkosebastian.cwpclient.cwprotocol.CWPProtocolListener;
 
 import java.io.IOException;
 import java.util.Observable;
 
-public class CWPModel extends Observable implements CWPMessaging, CWPControl {
+public class CWPModel extends Observable implements CWPMessaging, CWPControl, CWPProtocolListener {
 
-    public enum CWPState {Disconnected, Connected, LineUp, LineDown };
+    private CWPProtocolImplementation cwpProtocolImplementation;
 
-    private CWPState currentState = CWPState.Disconnected;
-    private int frequency = CWPControl.DEFAULT_FREQUENCY;
+    public CWPModel() {
+        cwpProtocolImplementation = new CWPProtocolImplementation(this);
+    }
 
     @Override
     public void lineUp() throws IOException {
-        currentState = CWPState.LineUp;
-        setChanged();
-        notifyObservers(currentState);
+        cwpProtocolImplementation.lineUp();
     }
 
     @Override
     public void lineDown() throws IOException {
-        currentState = CWPState.LineDown;
-        setChanged();
-        notifyObservers(currentState);
+        cwpProtocolImplementation.lineDown();
     }
 
     @Override
     public boolean isConnected() {
-        if(currentState != CWPState.Disconnected) {
-            return true;
-        }
-        return false;
+        return cwpProtocolImplementation.isConnected();
     }
 
     @Override
     public boolean lineIsUp() {
-        if(currentState != CWPState.LineUp) {
-            return true;
-        }
-        return false;
+        return cwpProtocolImplementation.lineIsUp();
     }
 
     @Override
     public void connect(String serverAddress, int serverPort, int frequency) throws IOException {
-        currentState = CWPState.Connected;
-        setChanged();
-        notifyObservers(currentState);
+        cwpProtocolImplementation.connect(serverAddress, serverPort, frequency);
     }
 
     @Override
     public void disconnect() throws IOException {
-        currentState = CWPState.Disconnected;
-        setChanged();
-        notifyObservers(currentState);
+        cwpProtocolImplementation.disconnect();
     }
 
     @Override
@@ -64,5 +53,11 @@ public class CWPModel extends Observable implements CWPMessaging, CWPControl {
     @Override
     public int frequency() {
         return 0;
+    }
+
+    @Override
+    public void onEvent(CWPEvent event, int param) {
+        setChanged();
+        notifyObservers(event);
     }
 }
