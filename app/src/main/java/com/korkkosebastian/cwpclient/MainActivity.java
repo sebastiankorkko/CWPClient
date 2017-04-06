@@ -1,6 +1,8 @@
 package com.korkkosebastian.cwpclient;
 
 import android.content.Intent;
+import android.preference.Preference;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;

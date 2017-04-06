@@ -5,6 +5,11 @@
     <header
         android:fragment="com.korkkosebastian.cwpclient.SettingsActivity$GeneralPreferenceFragment"
         android:icon="@drawable/ic_info_black_24dp"
-        android:title="@string/pref_header_general" />
+        android:title="@string/pref_header_general">
+        <extra android:name="general_settings" android:value="pref_general" ></extra>
+    </header>
 
 </preference-headers>
+
+
+
