@@ -182,7 +182,7 @@ public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Run
                     }
                 }
             };
-            timer.scheduleAtFixedRate(timerTask, 0, 3000);
+            timer.scheduleAtFixedRate(timerTask, 0, 30000);
 
         }
 

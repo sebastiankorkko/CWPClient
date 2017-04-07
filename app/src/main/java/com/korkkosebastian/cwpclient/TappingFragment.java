@@ -34,7 +34,7 @@ public class TappingFragment extends Fragment implements View.OnTouchListener, O
     }
 
     public boolean onTouch(View v, MotionEvent event) {
-        if(event.getAction() == MotionEvent.ACTION_UP) {
+        if(event.getAction() == MotionEvent.ACTION_DOWN) {
             try {
                 cwpMessaging.lineUp();
             } catch (IOException e) {
@@ -43,7 +43,7 @@ public class TappingFragment extends Fragment implements View.OnTouchListener, O
             return true;
         }
 
-        if(event.getAction() == MotionEvent.ACTION_DOWN) {
+        if(event.getAction() == MotionEvent.ACTION_UP) {
             try {
                 cwpMessaging.lineDown();
             } catch (IOException e) {
