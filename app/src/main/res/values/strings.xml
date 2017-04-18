@@ -14,7 +14,7 @@
 
     <string name="pref_server_address_title">Server address</string>
     <string name="pref_server_address_default">cwp.opimobi.com:20000</string>
-
+    <!--Public: cwp.opimobi.com:20000-->
     <string name="pref_frequency_title">Default frequency</string>
     <string name="pref_frequency_default">-1</string>
 

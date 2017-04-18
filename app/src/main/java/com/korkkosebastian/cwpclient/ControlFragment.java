@@ -71,7 +71,7 @@ public class ControlFragment extends Fragment implements View.OnClickListener, O
         if(toggleButton.isChecked()) {
            //connect
             try {
-                cwpControl.connect("address", 5, 5);
+                cwpControl.connect("cwp.opimobi.com", 20000, 5);
             } catch (IOException e) {
                 e.printStackTrace();
             }
