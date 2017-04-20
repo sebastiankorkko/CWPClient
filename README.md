@@ -20,14 +20,14 @@ No external dependencies apart from Android and JUnit (currently not used)
 
 ### Current features ###
 
-- User interface is implemented to some extent:
-     -Connect-button activates the tapping fragment
-     -Tapping fragment reacts to updates and passes lineup/linedown-calls to controller
-     -Preferences/settings implemented
-     -Protocol changes shown on log (and by switching the light on the tapping image)
-     -Main layout implemented with constraints
-- Threading implemented (todo: locking & sephamores)
-- Initial barebones for networking implemented (does not fully work atm)
+*- User interface is implemented to some extent:
+     *-Connect-button activates the tapping fragment
+     *-Tapping fragment reacts to updates and passes lineup/linedown-calls to controller
+     *-Preferences/settings implemented
+     *-Protocol changes shown on log (and by switching the light on the tapping image)
+     *-Main layout implemented with constraints
+*- Threading implemented (todo: locking & sephamores)
+*- Initial barebones for networking implemented (does not fully work atm)
 
 ### Under consideration ###
 
