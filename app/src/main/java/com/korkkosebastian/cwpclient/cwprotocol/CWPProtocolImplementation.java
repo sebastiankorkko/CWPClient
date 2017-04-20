@@ -24,6 +24,7 @@ public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Run
     private CWPState nextState = currentState;
     private int frequency = CWPControl.DEFAULT_FREQUENCY;
     private int messageValue;
+    private boolean lineUpByUser = false;
 
     private Handler receiveHandler = new Handler();
     private CWPConnectionReader cwpConnectionReader = null;
@@ -51,7 +52,11 @@ public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Run
     @Override
     public void lineUp() throws IOException {
         try {
-            cwpConnectionReader.changeProtocolState(CWPState.LineUp, 0);
+            if(currentState == CWPState.LineDown || currentState != CWPState.LineUp
+                    && !lineUpByUser) {
+                cwpConnectionReader.changeProtocolState(CWPState.LineUp, 0);
+                lineUpByUser = true;
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -65,7 +70,10 @@ public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Run
     @Override
     public void lineDown() throws IOException {
         try {
-            cwpConnectionReader.changeProtocolState(CWPState.LineDown, 0);
+            if(currentState == CWPState.LineUp && lineUpByUser) {
+                cwpConnectionReader.changeProtocolState(CWPState.LineDown, 0);
+                lineUpByUser = false;
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
