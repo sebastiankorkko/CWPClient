@@ -25,6 +25,8 @@ public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Run
     private int frequency = CWPControl.DEFAULT_FREQUENCY;
     private int messageValue;
     private boolean lineUpByUser = false;
+    private int timeStamp = 0;
+    private long initTime = 0;
 
     private Handler receiveHandler = new Handler();
     private CWPConnectionReader cwpConnectionReader = null;
@@ -51,14 +53,23 @@ public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Run
 
     @Override
     public void lineUp() throws IOException {
+        boolean lineSwitchToUp = false;
         try {
             if(currentState == CWPState.LineDown || currentState != CWPState.LineUp
                     && !lineUpByUser) {
-                cwpConnectionReader.changeProtocolState(CWPState.LineUp, 0);
-                lineUpByUser = true;
+                timeStamp = (int)(System.currentTimeMillis()-initTime);
+                sendMessage(timeStamp);
+                if(currentState == CWPState.LineDown) {
+                    currentState = CWPState.LineUp;
+                    lineSwitchToUp = true;
+                    lineUpByUser = true;
+                }
             }
-        } catch (InterruptedException e) {
+        } catch (IOException e) {
             e.printStackTrace();
+        }
+        if(lineSwitchToUp) {
+            cwpProtocolListener.onEvent(CWPProtocolListener.CWPEvent.ELineup, timeStamp);
         }
     }
 
@@ -69,13 +80,24 @@ public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Run
 
     @Override
     public void lineDown() throws IOException {
+        boolean lineSwitchToDown = false;
+        short lineDownMsg = 0;
         try {
             if(currentState == CWPState.LineUp && lineUpByUser) {
-                cwpConnectionReader.changeProtocolState(CWPState.LineDown, 0);
+                lineDownMsg = (short)(System.currentTimeMillis() - initTime - timeStamp);
+                sendMessage(lineDownMsg);
                 lineUpByUser = false;
+                if(!lineIsUp()) {
+                    currentState = CWPState.LineDown;
+                    lineSwitchToDown = true;
+                }
             }
-        } catch (InterruptedException e) {
+        } catch (IOException e) {
             e.printStackTrace();
+        }
+        if(lineSwitchToDown) {
+            cwpProtocolListener.onEvent(CWPProtocolListener.CWPEvent.ELineDown, lineDownMsg);
+
         }
     }
 
@@ -86,11 +108,6 @@ public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Run
         this.frequency = frequency;
 
         cwpConnectionReader = new CWPConnectionReader(this);
-        try {
-            cwpConnectionReader.changeProtocolState(CWPState.Connected, 0);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         cwpConnectionReader.startReading();
     }
 
@@ -163,6 +180,28 @@ public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Run
         }
     }
 
+    private void sendMessage(int msg) throws IOException {
+        ByteBuffer outgoingIntBuffer = ByteBuffer.allocate(4);
+        outgoingIntBuffer.order(ByteOrder.BIG_ENDIAN);
+        outgoingIntBuffer.putInt(0, msg);
+        outgoingIntBuffer.position(0);
+        byte[] outgoingByteArray = outgoingIntBuffer.array();
+        nos.write(outgoingByteArray);
+        nos.flush();
+        outgoingIntBuffer = null;
+    }
+
+    private void sendMessage(short msg) throws IOException {
+        ByteBuffer outgoingShortBuffer = ByteBuffer.allocate(2);
+        outgoingShortBuffer.order(ByteOrder.BIG_ENDIAN);
+        outgoingShortBuffer.putShort(0, msg);
+        outgoingShortBuffer.position(0);
+        byte[] outgoingByteArray = outgoingShortBuffer.array();
+        nos.write(outgoingByteArray);
+        nos.flush();
+        outgoingShortBuffer = null;
+    }
+
     private class CWPConnectionReader extends Thread {
 
         private boolean running = false;
@@ -190,6 +229,7 @@ public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Run
             SocketAddress socketAddress = new InetSocketAddress(serverAddress, serverPort);
             cwpSocket = new Socket();
             cwpSocket.connect(socketAddress, 5000);
+            initTime = System.currentTimeMillis();
             nis = cwpSocket.getInputStream();
             nos = cwpSocket.getOutputStream();
             changeProtocolState(CWPState.Connected, 0);
