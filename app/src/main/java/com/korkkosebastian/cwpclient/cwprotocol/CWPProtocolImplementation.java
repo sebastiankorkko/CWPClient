@@ -15,6 +15,7 @@ import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Observer;
+import java.util.concurrent.Semaphore;
 
 public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Runnable {
 
@@ -42,6 +43,8 @@ public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Run
 
     private ByteBuffer outBufffer = null;
 
+    private Semaphore lock = new Semaphore(1);
+
     public CWPProtocolImplementation(CWPProtocolListener cwpProtocolListener) {
         this.cwpProtocolListener = cwpProtocolListener;
     }
@@ -55,6 +58,7 @@ public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Run
     public void lineUp() throws IOException {
         boolean lineSwitchToUp = false;
         try {
+            lock.acquire();
             if(currentState == CWPState.LineDown || currentState != CWPState.LineUp
                     && !lineUpByUser) {
                 timeStamp = (int)(System.currentTimeMillis()-initTime);
@@ -62,11 +66,13 @@ public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Run
                 if(currentState == CWPState.LineDown) {
                     currentState = CWPState.LineUp;
                     lineSwitchToUp = true;
-                    lineUpByUser = true;
                 }
+                lineUpByUser = true;
             }
-        } catch (IOException e) {
+        } catch (InterruptedException e) {
             e.printStackTrace();
+        } finally {
+            lock.release();
         }
         if(lineSwitchToUp) {
             cwpProtocolListener.onEvent(CWPProtocolListener.CWPEvent.ELineup, timeStamp);
@@ -83,17 +89,20 @@ public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Run
         boolean lineSwitchToDown = false;
         short lineDownMsg = 0;
         try {
+            lock.acquire();
             if(currentState == CWPState.LineUp && lineUpByUser) {
                 lineDownMsg = (short)(System.currentTimeMillis() - initTime - timeStamp);
                 sendMessage(lineDownMsg);
                 lineUpByUser = false;
-                if(!lineIsUp()) {
+                if(lineIsUp()) {
                     currentState = CWPState.LineDown;
                     lineSwitchToDown = true;
                 }
             }
-        } catch (IOException e) {
+        } catch (InterruptedException e) {
             e.printStackTrace();
+        } finally {
+            lock.release();
         }
         if(lineSwitchToDown) {
             cwpProtocolListener.onEvent(CWPProtocolListener.CWPEvent.ELineDown, lineDownMsg);
@@ -160,21 +169,25 @@ public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Run
             case Connected:
                 Log.d(CWPConnectionReader.TAG, "State change to connected happening...");
                 currentState = nextState;
+                lock.release();
                 cwpProtocolListener.onEvent(CWPProtocolListener.CWPEvent.EConnected, 0);
                 break;
             case Disconnected:
                 Log.d(CWPConnectionReader.TAG, "State change to disconnected happening...");
                 currentState = nextState;
+                lock.release();
                 cwpProtocolListener.onEvent(CWPProtocolListener.CWPEvent.EDisconnected, 0);
                 break;
             case LineUp:
                 Log.d(CWPConnectionReader.TAG, "State change to line up happening...");
                 currentState = nextState;
+                lock.release();
                 cwpProtocolListener.onEvent(CWPProtocolListener.CWPEvent.ELineup, 0);
                 break;
             case LineDown:
                 Log.d(CWPConnectionReader.TAG, "State change to line down happening...");
                 currentState = nextState;
+                lock.release();
                 cwpProtocolListener.onEvent(CWPProtocolListener.CWPEvent.ELineDown, 0);
                 break;
         }
@@ -277,6 +290,7 @@ public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Run
 
         private void changeProtocolState(CWPState state, int param) throws InterruptedException {
             Log.d(TAG, "Change protocol state to " + state);
+            lock.acquire();
             nextState = state;
             messageValue = param;
             receiveHandler.post(processor);

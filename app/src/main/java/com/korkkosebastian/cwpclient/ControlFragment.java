@@ -1,8 +1,10 @@
 package com.korkkosebastian.cwpclient;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -19,10 +21,13 @@ import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class ControlFragment extends Fragment implements View.OnClickListener, Observer {
 
     private ToggleButton toggleButton;
     private CWPControl cwpControl;
+    private SharedPreferences prefs;
 
     public ControlFragment() {
     }
@@ -38,6 +43,7 @@ public class ControlFragment extends Fragment implements View.OnClickListener, O
 
         toggleButton = (ToggleButton) view.findViewById(R.id.connectionToggleButton);
         toggleButton.setOnClickListener(this);
+        toggleButton.setChecked(false);
 
         return view;
     }
@@ -68,19 +74,33 @@ public class ControlFragment extends Fragment implements View.OnClickListener, O
 
     @Override
     public void onClick(View v) {
-        if(toggleButton.isChecked()) {
-           //connect
-            try {
-                cwpControl.connect("cwp.opimobi.com", 20000, 5);
-            } catch (IOException e) {
-                e.printStackTrace();
+        prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String address = prefs.getString("server_address", null);
+        String[] parts = address.split(":");
+        if(parts.length == 2) {
+            int port = Integer.parseInt(parts[1]);
+            address = parts[0];
+
+            if (!cwpControl.isConnected()) {
+                //connect
+                try {
+                    cwpControl.connect(address, port, 5);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
+            else if(cwpControl.isConnected()) {
+                try {
+                    cwpControl.disconnect();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        if(!cwpControl.isConnected()) {
+            toggleButton.setChecked(false);
         } else {
-            try {
-                cwpControl.disconnect();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            toggleButton.setChecked(true);
         }
     }
 
