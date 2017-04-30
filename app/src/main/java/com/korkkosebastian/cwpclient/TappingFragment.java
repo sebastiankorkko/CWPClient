@@ -34,24 +34,25 @@ public class TappingFragment extends Fragment implements View.OnTouchListener, O
     }
 
     public boolean onTouch(View v, MotionEvent event) {
-        if(event.getAction() == MotionEvent.ACTION_DOWN) {
-            try {
-                cwpMessaging.lineUp();
-            } catch (IOException e) {
-                e.printStackTrace();
+        if(cwpMessaging.isConnected()) {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                try {
+                    cwpMessaging.lineUp();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return true;
             }
-            return true;
-        }
 
-        if(event.getAction() == MotionEvent.ACTION_UP) {
-            try {
-                cwpMessaging.lineDown();
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                try {
+                    cwpMessaging.lineDown();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return true;
             }
-            return true;
         }
-
         return false;
     }
 
@@ -79,9 +80,10 @@ public class TappingFragment extends Fragment implements View.OnTouchListener, O
     public void update(Observable o, Object arg) {
         if(cwpMessaging.lineIsUp()) {
             buttonImage.setImageResource(R.mipmap.hal9000_up);
-        }
-        if(!cwpMessaging.lineIsUp()) {
+        } else if(cwpMessaging.isConnected()) {
             buttonImage.setImageResource(R.mipmap.hal9000_down);
+        } else if(!cwpMessaging.isConnected()) {
+            buttonImage.setImageResource(R.mipmap.hal9000_offline);
         }
     }
 }

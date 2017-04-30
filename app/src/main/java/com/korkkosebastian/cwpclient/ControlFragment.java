@@ -74,33 +74,34 @@ public class ControlFragment extends Fragment implements View.OnClickListener, O
 
     @Override
     public void onClick(View v) {
-        prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String address = prefs.getString("server_address", null);
-        String[] parts = address.split(":");
-        if(parts.length == 2) {
+        if(toggleButton.isChecked()) {
+            Toast.makeText(getActivity().getApplicationContext(), getString(R.string.connecting_cwp), Toast.LENGTH_SHORT);
+            prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String address = prefs.getString("server_address", null);
+            String[] parts = address.split(":");
+            int serverFrequency = Integer.parseInt(prefs.getString("default_frequency", null));
             int port = Integer.parseInt(parts[1]);
             address = parts[0];
-
-            if (!cwpControl.isConnected()) {
-                //connect
-                try {
-                    cwpControl.connect(address, port, 5);
-                } catch (IOException e) {
-                    e.printStackTrace();
+            if (parts.length == 2 && port > 0 && port < 65536) {
+                if (!cwpControl.isConnected()) {
+                    try {
+                        cwpControl.connect(address, port, serverFrequency);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
+            } else {
+                Toast.makeText(getActivity().getApplicationContext(),
+                        "Host address:port not valid", Toast.LENGTH_SHORT);
             }
-            else if(cwpControl.isConnected()) {
+        } else if(!toggleButton.isChecked()) {
+            if (cwpControl.isConnected()) {
                 try {
                     cwpControl.disconnect();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-        }
-        if(!cwpControl.isConnected()) {
-            toggleButton.setChecked(false);
-        } else {
-            toggleButton.setChecked(true);
         }
     }
 
