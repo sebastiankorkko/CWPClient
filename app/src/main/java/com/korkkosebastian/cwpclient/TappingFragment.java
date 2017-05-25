@@ -15,7 +15,7 @@ import android.widget.ImageView;
 
 import com.korkkosebastian.cwpclient.model.CWPMessaging;
 
-public class TappingFragment extends Fragment implements View.OnTouchListener, Observer  {
+public class TappingFragment extends Fragment implements View.OnTouchListener, Observer {
 
     private ImageView buttonImage;
     private CWPMessaging cwpMessaging;
@@ -29,12 +29,11 @@ public class TappingFragment extends Fragment implements View.OnTouchListener, O
         View view = inflater.inflate(R.layout.tapping_fragment, container, false);
         buttonImage = (ImageView) view.findViewById(R.id.imageView1);
         buttonImage.setOnTouchListener(this);
-
         return view;
     }
 
     public boolean onTouch(View v, MotionEvent event) {
-        if(cwpMessaging.isConnected()) {
+        if (cwpMessaging.isConnected()) {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 try {
                     cwpMessaging.lineUp();
@@ -59,14 +58,12 @@ public class TappingFragment extends Fragment implements View.OnTouchListener, O
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        CWPProvider cwpProvider = (CWPProvider) getActivity();
-        cwpMessaging = cwpProvider.getMessaging();
-        cwpMessaging.addObserver(this);
     }
 
     @Override
@@ -86,4 +83,17 @@ public class TappingFragment extends Fragment implements View.OnTouchListener, O
             buttonImage.setImageResource(R.mipmap.hal9000_offline);
         }
     }
+
+    public void setCwpMessaging(CWPMessaging cwpMessaging) {
+        if(cwpMessaging != null) {
+            this.cwpMessaging = cwpMessaging;
+            cwpMessaging.addObserver(this);
+        }
+    }
+
+    public void setCwpMessagingToNull() {
+        this.cwpMessaging = null;
+    }
 }
+
+

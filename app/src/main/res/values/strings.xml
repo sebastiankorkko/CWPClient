@@ -5,7 +5,8 @@
     <string name="serverUrlLabel">Server URL:</string>
     <string name="serverUrlHint">Server URL (IP:port)</string>
 
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_tapping_fragment">Tapping Frag</string>
+    <string name="title_control_fragment">Control Frag</string>
     <string name="textOn">Disconnect</string>
     <string name="textOff">Connect</string>
     <string name="title_activity_settings">Settings</string>
@@ -13,7 +14,7 @@
     <!-- Strings related to Settings -->
 
     <string name="pref_server_address_title">Server address</string>
-    <string name="pref_server_address_default">cwp.opimobi.com:20000</string>
+    <string name="pref_server_address_default">127.0.0.1:20000</string>
     <!--Public: cwp.opimobi.com:20000-->
     <string name="pref_frequency_title">Default frequency</string>
     <string name="pref_frequency_default">-1337</string>
@@ -46,4 +47,6 @@
         <item>0</item>
         <item>-1</item>
     </string-array>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="action_settings">Settings</string>
 </resources>
