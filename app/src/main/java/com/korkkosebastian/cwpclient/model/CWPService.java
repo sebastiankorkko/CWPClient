@@ -16,6 +16,7 @@ public class CWPService extends Service implements CWPProvider {
     private CWPModel cwpModel = null;
     private IBinder cwpBinder = new CWPBinder();
     private int clients = 0;
+    private Signaller signaller;
 
     @Nullable
     @Override
@@ -26,6 +27,8 @@ public class CWPService extends Service implements CWPProvider {
     @Override
     public void onCreate() {
         this.cwpModel = new CWPModel();
+        signaller = new Signaller();
+        signaller.setCwpMessaging(cwpModel);
     }
 
     @Override
