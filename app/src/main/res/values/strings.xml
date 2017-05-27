@@ -14,39 +14,26 @@
     <!-- Strings related to Settings -->
 
     <string name="pref_server_address_title">Server address</string>
-    <string name="pref_server_address_default">127.0.0.1:20000</string>
+    <string name="pref_server_address_default">cwp.opimobi.com:2000</string>
     <!--Public: cwp.opimobi.com:20000-->
     <string name="pref_frequency_title">Default frequency</string>
     <string name="pref_frequency_default">-1337</string>
 
-    <!-- Example General settings -->
+
     <string name="pref_header_general">General settings</string>
 
-    <string name="pref_title_social_recommendations">Enable social recommendations</string>
-    <string name="pref_description_social_recommendations">Recommendations for people to contact
-        based on your message history
-    </string>
-
-    <string name="pref_title_display_name">Display name</string>
-    <string name="pref_default_display_name">John Smith</string>
-
-    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
     <string name="action_settings_title">Settings</string>
     <string name="default_frequency">default_frequency</string>
     <string name="server_address">server_address</string>
     <string name="pref_server_address_summary">The CWP server address used</string>
     <string name="pref_default_frequency_summary">Default frequency for the client</string>
     <string name="connecting_cwp">Connecting...</string>
-    <string-array name="pref_example_list_titles">
-        <item>Always</item>
-        <item>When possible</item>
-        <item>Never</item>
-    </string-array>
-    <string-array name="pref_example_list_values">
-        <item>1</item>
-        <item>0</item>
-        <item>-1</item>
-    </string-array>
     <string name="title_activity_main">MainActivity</string>
     <string name="action_settings">Settings</string>
+
+    <!-- Notification strings -->
+    <string name="line_is_up">Line is up</string>
+    <string name="line_is_up_def">The server sent line up-signal</string>
+    <string name="line_disconnected">Disconnected</string>
+    <string name="line_disconnected_def">CWP Client disconnected</string>
 </resources>

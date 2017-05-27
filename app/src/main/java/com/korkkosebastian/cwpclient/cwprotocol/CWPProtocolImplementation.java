@@ -29,6 +29,7 @@ public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Run
     private int currentFrequency = CWPControl.DEFAULT_FREQUENCY;
     private int messageValue;
     private boolean lineUpByUser = false;
+    private boolean lineUpByServer = false;
     private int timeStamp = 0;
     private long initTime = 0;
 
@@ -62,11 +63,11 @@ public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Run
         boolean lineSwitchToUp = false;
         try {
             lock.acquire();
-            if(currentState == CWPState.LineDown || currentState != CWPState.LineUp
+            if((currentState == CWPState.LineDown || currentState != CWPState.LineUp)
                     && !lineUpByUser) {
                 timeStamp = (int)(System.currentTimeMillis()-initTime);
                 sendMessage(timeStamp);
-                if(currentState == CWPState.LineDown) {
+                if(currentState == CWPState.LineDown && !lineUpByServer) {
                     currentState = CWPState.LineUp;
                     lineSwitchToUp = true;
                 }
@@ -154,7 +155,7 @@ public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Run
     @Override
     public void setFrequency(int frequency) throws IOException {
         if(currentFrequency != frequency) {
-            if (frequency < 0) {
+            if (frequency > 0) {
                 currentFrequency = -frequency;
             } else if (currentFrequency == 0) {
                 //not valid -> use default
@@ -171,11 +172,12 @@ public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Run
         try {
             lock.acquire();
             if(currentState == CWPState.LineDown) {
+                Log.d(TAG, "Sending frequency: " + currentFrequency);
                 sendMessage(currentFrequency);
                 currentState = CWPState.Connected;
                 frequencySwitched = true;
             } else {
-                //line not down - unable to switch frequency
+                Log.d(TAG, "Line not down - unable to change frequency");
             }
         } catch(InterruptedException e) {
             e.printStackTrace();
@@ -198,12 +200,14 @@ public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Run
 
     @Override
     public void run() {
+        int tempMessageValue = messageValue;
         switch (nextState) {
             case Connected:
                 Log.d(CWPConnectionReader.TAG, "State change to connected happening...");
                 currentState = nextState;
                 lock.release();
-                cwpProtocolListener.onEvent(CWPProtocolListener.CWPEvent.EConnected, 0);
+                lineUpByServer = false;
+                cwpProtocolListener.onEvent(CWPProtocolListener.CWPEvent.EConnected, tempMessageValue);
                 break;
             case Disconnected:
                 Log.d(CWPConnectionReader.TAG, "State change to disconnected happening...");
@@ -216,16 +220,35 @@ public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Run
                 if(!lineUpByUser) {
                     currentState = nextState;
                     lock.release();
-                    cwpProtocolListener.onEvent(CWPProtocolListener.CWPEvent.ELineup, 0);
+                    cwpProtocolListener.onEvent(CWPProtocolListener.CWPEvent.ELineup, tempMessageValue);
                 } else {
                     lock.release();
                 }
                 break;
             case LineDown:
                 Log.d(CWPConnectionReader.TAG, "State change to line down happening...");
-                currentState = nextState;
-                lock.release();
-                cwpProtocolListener.onEvent(CWPProtocolListener.CWPEvent.ELineDown, 0);
+                if(currentState == CWPState.Connected) {
+                    currentState = nextState;
+                    lock.release();
+                    if(messageValue != currentFrequency) {
+                        try {
+                            sendFrequency();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        cwpProtocolListener.onEvent(CWPProtocolListener.CWPEvent.EChangedFrequency, tempMessageValue);
+                    }
+                } else {
+                    lineUpByServer = false;
+                    if(!lineUpByUser) {
+                        currentState = nextState;
+                        lock.release();
+                        cwpProtocolListener.onEvent(CWPProtocolListener.CWPEvent.ELineDown, tempMessageValue);
+                    } else {
+                        lock.release();
+                    }
+                }
                 break;
         }
     }
@@ -239,6 +262,7 @@ public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Run
         nos.write(outgoingByteArray);
         nos.flush();
         outgoingIntBuffer = null;
+        Log.d(TAG, "Sent message: " + msg);
     }
 
     private void sendMessage(short msg) throws IOException {
@@ -250,6 +274,7 @@ public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Run
         nos.write(outgoingByteArray);
         nos.flush();
         outgoingShortBuffer = null;
+        Log.d(TAG, "Sent message: " + msg);
     }
 
     private class CWPConnectionReader extends Thread {
@@ -283,6 +308,7 @@ public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Run
             nis = cwpSocket.getInputStream();
             nos = cwpSocket.getOutputStream();
             lineUpByUser = false;
+            lineUpByServer = false;
             changeProtocolState(CWPState.Connected, 0);
         }
 
@@ -304,10 +330,7 @@ public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Run
                             byteBuffer.position(0);
                             int rcvValue = byteBuffer.getInt();
                             Log.d(TAG, "Received: " + rcvValue);
-                            if(rcvValue < 0 && rcvValue != RESERVED_VALUE) {
-                                changeProtocolState(CWPState.LineDown, 0);
-                            }
-                            else if(rcvValue >= 0) {
+                            if(rcvValue >= 0) {
                                 changeProtocolState(CWPState.LineUp, rcvValue);
                                 bytesToRead = 2;
                                 bytesRead = readLoop(byteArray, bytesToRead);
@@ -318,7 +341,10 @@ public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Run
                                     short shortValue = byteBuffer.getShort();
                                     changeProtocolState(CWPState.LineDown, shortValue);
                                 }
+                            } else if( rcvValue != RESERVED_VALUE) {
+                                changeProtocolState(CWPState.LineDown, rcvValue);
                             }
+
                         }
                     }
 

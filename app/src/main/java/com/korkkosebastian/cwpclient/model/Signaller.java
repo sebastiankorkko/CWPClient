@@ -29,4 +29,9 @@ public class Signaller implements Observer {
             this.cwpMessaging.addObserver(this);
         }
     }
+
+    public void setCwpMessagingNull() {
+        this.cwpMessaging.deleteObserver(this);
+        this.cwpMessaging = null;
+    }
 }

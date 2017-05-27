@@ -2,13 +2,12 @@ package com.korkkosebastian.cwpclient;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import android.support.v4.app.NotificationCompat;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -17,13 +16,10 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.korkkosebastian.cwpclient.cwprotocol.CWPControl;
-import com.korkkosebastian.cwpclient.model.CWPMessaging;
 
 import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
-
-import static android.content.Context.MODE_PRIVATE;
 
 public class ControlFragment extends Fragment implements View.OnClickListener, Observer {
 
@@ -71,7 +67,9 @@ public class ControlFragment extends Fragment implements View.OnClickListener, O
     }
 
     @Override
-    public void update(Observable o, Object arg) {}
+    public void update(Observable o, Object arg) {
+
+    }
 
     @Override
     public void onClick(View v) {

@@ -1,22 +1,32 @@
 package com.korkkosebastian.cwpclient.model;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 
 import com.korkkosebastian.cwpclient.CWPProvider;
+import com.korkkosebastian.cwpclient.MainActivity;
+import com.korkkosebastian.cwpclient.R;
 import com.korkkosebastian.cwpclient.cwprotocol.CWPControl;
 
 import java.io.IOException;
+import java.util.Observable;
+import java.util.Observer;
 
-public class CWPService extends Service implements CWPProvider {
+public class CWPService extends Service implements CWPProvider, Observer {
 
     private CWPModel cwpModel = null;
     private IBinder cwpBinder = new CWPBinder();
     private int clients = 0;
     private Signaller signaller;
+    private NotificationCompat.Builder mBuilder;
 
     @Nullable
     @Override
@@ -27,8 +37,7 @@ public class CWPService extends Service implements CWPProvider {
     @Override
     public void onCreate() {
         this.cwpModel = new CWPModel();
-        signaller = new Signaller();
-        signaller.setCwpMessaging(cwpModel);
+        cwpModel.addObserver(this);
     }
 
     @Override
@@ -38,6 +47,7 @@ public class CWPService extends Service implements CWPProvider {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        cwpModel.deleteObserver(this);
         cwpModel = null;
     }
 
@@ -56,6 +66,46 @@ public class CWPService extends Service implements CWPProvider {
         return cwpModel;
     }
 
+    @Override
+    public void update(Observable o, Object arg) {
+            if(clients == 0) {
+                boolean shouldNotify = false;
+                int notificationId = -1;
+                if(mBuilder == null) {
+                    mBuilder = new NotificationCompat.Builder(this)
+                            .setSmallIcon(R.drawable.ic_notifications_black_24dp);
+                }
+
+                NotificationManager mNotificationManager =
+                        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+                if (cwpModel.lineIsUp()) {
+                    mBuilder.setContentTitle(getString(R.string.line_is_up))
+                            .setContentText(getString(R.string.line_is_up_def));
+                    shouldNotify = true;
+                    notificationId = 0;
+                } else if (!cwpModel.isConnected()) {
+                    mBuilder.setContentTitle(getString(R.string.line_disconnected))
+                            .setContentText(getString(R.string.line_disconnected_def));
+                    shouldNotify = true;
+                    notificationId = 1;
+                }
+                if(shouldNotify) {
+                    Intent resultIntent = new Intent(this, MainActivity.class);
+                    TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+                    stackBuilder.addParentStack(MainActivity.class);
+                    stackBuilder.addNextIntent(resultIntent);
+                    PendingIntent resultPendingIntent =
+                            stackBuilder.getPendingIntent(
+                                    0,
+                                    PendingIntent.FLAG_UPDATE_CURRENT
+                            );
+                    mBuilder.setContentIntent(resultPendingIntent);
+                    mNotificationManager.notify(notificationId, mBuilder.build());
+                }
+            }
+    }
+
     public class CWPBinder extends Binder {
         public CWPService getService() {
             return CWPService.this;
@@ -63,10 +113,25 @@ public class CWPService extends Service implements CWPProvider {
     }
 
     public void startUsing() {
-        clients++;
+        this.clients++;
+        if(clients == 1) {
+            if(signaller == null) {
+                signaller = new Signaller();
+                signaller.setCwpMessaging(cwpModel);
+            }
+            if(mBuilder != null) {
+                mBuilder = null;
+            }
+        }
     }
 
     public void stopUsing() {
-        clients--;
+        this.clients--;
+        if(clients == 0) {
+            if (signaller != null) {
+                signaller.setCwpMessagingNull();
+                signaller = null;
+            }
+        }
     }
 }
