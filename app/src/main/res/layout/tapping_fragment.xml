@@ -10,8 +10,8 @@
         android:id="@+id/imageView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        app:srcCompat="@mipmap/hal9000_offline" />
+        app:srcCompat="@mipmap/hal9000_offline"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

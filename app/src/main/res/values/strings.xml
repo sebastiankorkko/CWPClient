@@ -19,7 +19,6 @@
     <string name="pref_frequency_title">Default frequency</string>
     <string name="pref_frequency_default">-1337</string>
 
-
     <string name="pref_header_general">General settings</string>
 
     <string name="action_settings_title">Settings</string>

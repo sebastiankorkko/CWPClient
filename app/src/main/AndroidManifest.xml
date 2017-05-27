@@ -34,7 +34,6 @@
             android:name=".model.CWPService"
             android:enabled="true"
             android:exported="true" />
-
     </application>
 
 </manifest>

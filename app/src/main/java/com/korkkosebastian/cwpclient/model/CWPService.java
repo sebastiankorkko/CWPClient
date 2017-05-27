@@ -10,6 +10,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.util.Log;
 
 import com.korkkosebastian.cwpclient.CWPProvider;
 import com.korkkosebastian.cwpclient.MainActivity;
@@ -23,10 +24,13 @@ import java.util.Observer;
 public class CWPService extends Service implements CWPProvider, Observer {
 
     private CWPModel cwpModel = null;
-    private IBinder cwpBinder = new CWPBinder();
+    private final IBinder cwpBinder = new CWPBinder();
     private int clients = 0;
     private Signaller signaller;
     private NotificationCompat.Builder mBuilder;
+    private NotificationManager notificationManager;
+
+    private static final String TAG = "CWPService";
 
     @Nullable
     @Override
@@ -36,8 +40,14 @@ public class CWPService extends Service implements CWPProvider, Observer {
 
     @Override
     public void onCreate() {
+        notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         this.cwpModel = new CWPModel();
         cwpModel.addObserver(this);
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        return START_NOT_STICKY;
     }
 
     @Override
@@ -69,26 +79,32 @@ public class CWPService extends Service implements CWPProvider, Observer {
     @Override
     public void update(Observable o, Object arg) {
             if(clients == 0) {
+                Log.d(TAG, "Notification service used");
                 boolean shouldNotify = false;
                 int notificationId = -1;
                 if(mBuilder == null) {
                     mBuilder = new NotificationCompat.Builder(this)
                             .setSmallIcon(R.drawable.ic_notifications_black_24dp);
                 }
-
-                NotificationManager mNotificationManager =
-                        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
+                if(notificationManager == null) {
+                    notificationManager =
+                            (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                }
                 if (cwpModel.lineIsUp()) {
                     mBuilder.setContentTitle(getString(R.string.line_is_up))
                             .setContentText(getString(R.string.line_is_up_def));
                     shouldNotify = true;
-                    notificationId = 0;
+                    notificationId = 001;
                 } else if (!cwpModel.isConnected()) {
                     mBuilder.setContentTitle(getString(R.string.line_disconnected))
                             .setContentText(getString(R.string.line_disconnected_def));
                     shouldNotify = true;
-                    notificationId = 1;
+                    notificationId = 002;
+                } else {
+                    mBuilder.setContentTitle("I'm still running")
+                            .setContentText("Yup");
+                    shouldNotify = true;
+                    notificationId = 003;
                 }
                 if(shouldNotify) {
                     Intent resultIntent = new Intent(this, MainActivity.class);
@@ -101,7 +117,7 @@ public class CWPService extends Service implements CWPProvider, Observer {
                                     PendingIntent.FLAG_UPDATE_CURRENT
                             );
                     mBuilder.setContentIntent(resultPendingIntent);
-                    mNotificationManager.notify(notificationId, mBuilder.build());
+                    notificationManager.notify(notificationId, mBuilder.build());
                 }
             }
     }
@@ -122,6 +138,7 @@ public class CWPService extends Service implements CWPProvider, Observer {
             if(mBuilder != null) {
                 mBuilder = null;
             }
+            notificationManager.cancelAll();
         }
     }
 
@@ -133,5 +150,6 @@ public class CWPService extends Service implements CWPProvider, Observer {
                 signaller = null;
             }
         }
+        Log.d(TAG, "Client stopped using service - clients: " + clients);
     }
 }

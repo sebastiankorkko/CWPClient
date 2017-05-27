@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import com.korkkosebastian.cwpclient.model.CWPMessaging;
@@ -84,10 +85,21 @@ public class TappingFragment extends Fragment implements View.OnTouchListener, O
         }
     }
 
+    public void updateView() {
+            if (cwpMessaging.lineIsUp()) {
+                buttonImage.setImageResource(R.mipmap.hal9000_up);
+            } else if (cwpMessaging.isConnected()) {
+                buttonImage.setImageResource(R.mipmap.hal9000_down);
+            } else if (!cwpMessaging.isConnected()) {
+                buttonImage.setImageResource(R.mipmap.hal9000_offline);
+            }
+    }
+
     public void setCwpMessaging(CWPMessaging cwpMessaging) {
         if(cwpMessaging != null) {
             this.cwpMessaging = cwpMessaging;
             cwpMessaging.addObserver(this);
+            updateView();
         }
     }
 

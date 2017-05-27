@@ -3,10 +3,8 @@ package com.korkkosebastian.cwpclient;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.NotificationCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +24,7 @@ public class ControlFragment extends Fragment implements View.OnClickListener, O
     private Button changeFrequencyButton;
     private String frequency;
     private ToggleButton toggleButton;
+    private EditText frequencyInput;
     private CWPControl cwpControl;
     private SharedPreferences prefs;
 
@@ -49,6 +48,9 @@ public class ControlFragment extends Fragment implements View.OnClickListener, O
         changeFrequencyButton = (Button) view.findViewById(R.id.changeButton);
         changeFrequencyButton.setOnClickListener(this);
 
+        frequencyInput = (EditText) view.findViewById(R.id.frequencyInput);
+        frequencyInput.setText(getString(R.string.pref_frequency_default));
+
         return view;
     }
 
@@ -69,6 +71,14 @@ public class ControlFragment extends Fragment implements View.OnClickListener, O
     @Override
     public void update(Observable o, Object arg) {
 
+    }
+
+    public void updateView() {
+        if(cwpControl.isConnected()) {
+            changeFrequencyButton.setPressed(true);
+        } else {
+            changeFrequencyButton.setPressed(false);
+        }
     }
 
     @Override
@@ -129,6 +139,7 @@ public class ControlFragment extends Fragment implements View.OnClickListener, O
             this.cwpControl = cwpControl;
             cwpControl.addObserver(this);
         }
+        updateView();
     }
 
     public void setCwpControlNull() {

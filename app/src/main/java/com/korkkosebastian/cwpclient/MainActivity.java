@@ -12,8 +12,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.korkkosebastian.cwpclient.cwprotocol.CWPControl;
 import com.korkkosebastian.cwpclient.model.CWPMessaging;
@@ -25,6 +25,8 @@ public class MainActivity extends AppCompatActivity implements CWPProvider {
     private boolean isBound = false;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
+
+    private static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,17 +42,18 @@ public class MainActivity extends AppCompatActivity implements CWPProvider {
         mViewPager.setOffscreenPageLimit(3);
 
         Intent i = new Intent(this, CWPService.class);
-        String activityName = (this.startService(i)).toString();
+        Log.d(TAG, getApplicationContext().toString());
+        String activityName = (startService(i)).toString();
         if(activityName == null) {
-            Toast.makeText(getApplicationContext(),
-                    "Service returned null", Toast.LENGTH_SHORT);
+            Log.d(TAG, "Service returned null");
+        } else {
+            Log.d(TAG, "Service started");
         }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        cwpService = null;
     }
 
     @Override
@@ -93,24 +96,31 @@ public class MainActivity extends AppCompatActivity implements CWPProvider {
     @Override
     protected void onStart() {
         super.onStart();
-
         Intent i = new Intent(this, CWPService.class);
+        Log.d(TAG, getApplicationContext().toString());
         boolean bindProcessStarted = bindService(i, mConnection, Context.BIND_AUTO_CREATE);
         if(!bindProcessStarted) {
-            Toast.makeText(getApplicationContext(),
-                    "Bind process didn't start", Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "Bind process didn't start");
         } else {
-            Toast.makeText(getApplicationContext(),
-                    "Binding started", Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "Bind process started");
         }
+
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        cwpService.stopUsing();
         if(isBound) {
-            unbindService(mConnection);
+            try {
+                Log.d(TAG, getApplicationContext().toString());
+                unbindService(mConnection);
+            } catch (IllegalArgumentException ex) {
+                ex.printStackTrace();
+            }
+            isBound = false;
         }
+        Log.d(TAG, "Stopped using CWPService");
     }
 
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -123,31 +133,22 @@ public class MainActivity extends AppCompatActivity implements CWPProvider {
             if(fT instanceof TappingFragment && fT != null) {
                 ((TappingFragment) fT).setCwpMessaging(cwpService.getMessaging());
             }
-            getSupportFragmentManager().beginTransaction().detach(fT).commitNowAllowingStateLoss();
-            getSupportFragmentManager().beginTransaction().attach(fT).commitAllowingStateLoss();
+            //getSupportFragmentManager().beginTransaction().detach(fT).commitNowAllowingStateLoss();
+            //getSupportFragmentManager().beginTransaction().attach(fT).commitAllowingStateLoss();
 
             Fragment fC = mSectionsPagerAdapter.getItem(1);
             if(fC instanceof ControlFragment && fC != null) {
                 ((ControlFragment) fC).setCwpControl(cwpService.getControl());
             }
-            getSupportFragmentManager().beginTransaction().detach(fC).commitNowAllowingStateLoss();
-            getSupportFragmentManager().beginTransaction().attach(fC).commitAllowingStateLoss();
-/*
-            Fragment fF = getSupportFragmentManager().findFragmentById(R.id.frequency_fragment);
-            if(fF instanceof FrequencyFragment) {
-                ((FrequencyFragment) fF).setCwpControl(cwpService.getControl());
-            }
-            */
-            Toast.makeText(getApplicationContext(),
-                    "Binding done", Toast.LENGTH_SHORT).show();
+            //getSupportFragmentManager().beginTransaction().detach(fC).commitNowAllowingStateLoss();
+            //getSupportFragmentManager().beginTransaction().attach(fC).commitAllowingStateLoss();
             cwpService.startUsing();
+            Log.d(TAG, "Binding done - started CWPService");
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            cwpService.stopUsing();
             isBound = false;
-
             Fragment fT = mSectionsPagerAdapter.getItem(0);
             if(fT instanceof TappingFragment) {
                 ((TappingFragment) fT).setCwpMessagingToNull();
@@ -157,13 +158,6 @@ public class MainActivity extends AppCompatActivity implements CWPProvider {
             if(fC instanceof ControlFragment) {
                 ((ControlFragment) fC).setCwpControlNull();
             }
-
-/*
-            Fragment fF = getSupportFragmentManager().findFragmentById(R.id.frequency_fragment);
-            if(fF instanceof FrequencyFragment) {
-                ((FrequencyFragment) fF).setCwpControlNull();
-            }
-        */
         }
     };
 
