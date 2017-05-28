@@ -11,25 +11,24 @@
 
 1. Import this repository to Android Studio (tested on 2.3.1)
 2. Build with Gradle (AndroidSDK 25.0.2, min 15)
-3. Tested on embedded AVD emulator device:
-     * Nexus 5X API 25 x86, 1080 x 1920: 420dpi, 
-     * Target: Android 7.1.1(Google APIs), Size: 2GB
-
+3. Tested on embedded AVD emulator device running API 23 (Has issues on API 25)
+    
 This repository has the gradle scripts included (use or don't).
 
 No external dependencies apart from Android and JUnit (currently not used)
 
 ### Current features ###
 
-* User interface is implemented to some extent:
-     * Connect-button activates the tapping fragment
-     * Tapping fragment reacts to updates and passes lineup/linedown-calls to controller
+* User interface is implemented:
+     * All required pieces are working and responsive
      * Preferences/settings implemented
-     * Protocol changes shown on log (and by switching the light on the tapping image)
-     * Main layout implemented with constraints
-* Threading implemented (todo: locking & sephamores)
-* Initial barebones for networking implemented (does not fully work atm)
+     * Main layout implemented with CoordinatorLayout and fragments
+* Service, service connection and notifications all working
+* Threading implemented (receiving data)
 
-### Under consideration ###
+### Issues ###
 
-* Sliding interface does not make sense at the moment. I'm working on bringing the server properties over from the second page to the main page and to be together with the connect-button. This makes sense from UI-point of view.
+* Currently no bigger issues, but summary of my hurdles and minor problems:
+     * Switched ConstraintLayout to CoordinatorLayout. Didn't fix the connectivity issue (originally I thought it was internal issue). Shame on me for not using enough debug-messages.
+     * Issue with networking in API 25, have not had the time to fix it by implementing separate threading for sending data.
+     * Random issue, where the top bar and the menu-button went missing when coming back to the app from the OS. Was unable to replicate the issue with consistency and may be present.
