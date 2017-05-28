@@ -23,7 +23,8 @@
         android:layout_alignBaseline="@+id/frequencyInput"
         android:layout_alignBottom="@+id/frequencyInput"
         android:layout_toLeftOf="@+id/frequencyInput"
-        android:layout_toStartOf="@+id/frequencyInput" />
+        android:layout_toStartOf="@+id/frequencyInput"
+        />
 
     <EditText
         android:id="@+id/frequencyInput"
@@ -32,6 +33,8 @@
         android:layout_centerHorizontal="true"
         android:width="100dp"
         android:layout_marginTop="10dp"
+        android:ellipsize="end"
+        android:maxLines="1"
         />
 
     <Button

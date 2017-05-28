@@ -116,5 +116,3 @@ public class TappingFragment extends Fragment implements View.OnTouchListener, O
         this.cwpMessaging = null;
     }
 }
-
-

@@ -15,7 +15,7 @@
         android:title="@string/pref_frequency_title"
         android:defaultValue="@string/pref_frequency_default"
         android:summary="@string/pref_default_frequency_summary"
-        android:inputType="number"
+        android:digits="0123456789-"
         android:singleLine="true"
         />
     </PreferenceCategory>

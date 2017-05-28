@@ -52,7 +52,7 @@ public class CWPModel extends Observable implements CWPMessaging, CWPControl, CW
 
     @Override
     public int frequency() {
-        return 0;
+        return cwpProtocolImplementation.frequency();
     }
 
     @Override

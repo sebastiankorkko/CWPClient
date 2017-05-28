@@ -28,6 +28,7 @@ public class ControlFragment extends Fragment implements View.OnClickListener, O
     private EditText frequencyInput;
     private CWPControl cwpControl;
     private SharedPreferences prefs;
+    private String defaultFrequency;
 
     public ControlFragment() {
     }
@@ -49,7 +50,7 @@ public class ControlFragment extends Fragment implements View.OnClickListener, O
         changeFrequencyButton.setOnClickListener(this);
 
         frequencyInput = (EditText) view.findViewById(R.id.frequencyInput);
-        frequencyInput.setText(getString(R.string.pref_frequency_default));
+        prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         return view;
     }
@@ -91,17 +92,16 @@ public class ControlFragment extends Fragment implements View.OnClickListener, O
             if (changeFrequencyButton.isPressed()) {
                 EditText input = (EditText) getView().findViewById(R.id.frequencyInput);
                 frequency = input.getText().toString();
-                //frequency = getView().findViewById(R.id.frequencyInput).toString();
-                int intFre = Integer.parseInt(frequency);
-                try {
-                    cwpControl.setFrequency(intFre);
-                } catch (IOException e) {
-                    e.printStackTrace();
+                String regex = ("^[-]?\\d+");
+                if(frequency.matches(regex)) {
+                    int intFre = Integer.parseInt(frequency);
+                    try {
+                        cwpControl.setFrequency(intFre);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
-                Toast.makeText(getActivity(), "Changed frequency", Toast.LENGTH_SHORT).show();
             }
-            Toast.makeText(getActivity().getApplicationContext(),
-                    "buttonstate " + toggleButton.isChecked(), Toast.LENGTH_SHORT).show();
             if (toggleButton.isPressed()) {
                 if (toggleButton.isChecked()) {
                     Toast.makeText(getActivity().getApplicationContext(), getString(R.string.connecting_cwp), Toast.LENGTH_SHORT);
@@ -133,8 +133,6 @@ public class ControlFragment extends Fragment implements View.OnClickListener, O
                     }
                 }
             }
-        } else {
-            Toast.makeText(getActivity(), "cwpMessaging null", Toast.LENGTH_SHORT).show();
         }
     }
 
