@@ -12,14 +12,14 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
+import java.io.IOException;
+import java.util.Observable;
+import java.util.Observer;
+
 import com.korkkosebastian.cwpclient.CWPProvider;
 import com.korkkosebastian.cwpclient.MainActivity;
 import com.korkkosebastian.cwpclient.R;
 import com.korkkosebastian.cwpclient.cwprotocol.CWPControl;
-
-import java.io.IOException;
-import java.util.Observable;
-import java.util.Observer;
 
 public class CWPService extends Service implements CWPProvider, Observer {
 
