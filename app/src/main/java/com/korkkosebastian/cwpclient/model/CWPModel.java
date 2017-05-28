@@ -47,7 +47,7 @@ public class CWPModel extends Observable implements CWPMessaging, CWPControl, CW
 
     @Override
     public void setFrequency(int frequency) throws IOException {
-
+        cwpProtocolImplementation.setFrequency(frequency);
     }
 
     @Override

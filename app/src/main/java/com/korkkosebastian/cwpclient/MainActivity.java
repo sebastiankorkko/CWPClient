@@ -104,7 +104,6 @@ public class MainActivity extends AppCompatActivity implements CWPProvider {
         } else {
             Log.d(TAG, "Bind process started");
         }
-
     }
 
     @Override
@@ -133,15 +132,10 @@ public class MainActivity extends AppCompatActivity implements CWPProvider {
             if(fT instanceof TappingFragment && fT != null) {
                 ((TappingFragment) fT).setCwpMessaging(cwpService.getMessaging());
             }
-            //getSupportFragmentManager().beginTransaction().detach(fT).commitNowAllowingStateLoss();
-            //getSupportFragmentManager().beginTransaction().attach(fT).commitAllowingStateLoss();
-
             Fragment fC = mSectionsPagerAdapter.getItem(1);
             if(fC instanceof ControlFragment && fC != null) {
                 ((ControlFragment) fC).setCwpControl(cwpService.getControl());
             }
-            //getSupportFragmentManager().beginTransaction().detach(fC).commitNowAllowingStateLoss();
-            //getSupportFragmentManager().beginTransaction().attach(fC).commitAllowingStateLoss();
             cwpService.startUsing();
             Log.d(TAG, "Binding done - started CWPService");
         }

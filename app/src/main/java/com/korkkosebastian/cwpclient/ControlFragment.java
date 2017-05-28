@@ -28,10 +28,8 @@ public class ControlFragment extends Fragment implements View.OnClickListener, O
     private EditText frequencyInput;
     private CWPControl cwpControl;
     private SharedPreferences prefs;
-    private String defaultFrequency;
 
-    public ControlFragment() {
-    }
+    public ControlFragment() { }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,7 +48,6 @@ public class ControlFragment extends Fragment implements View.OnClickListener, O
         changeFrequencyButton.setOnClickListener(this);
 
         frequencyInput = (EditText) view.findViewById(R.id.frequencyInput);
-        prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         return view;
     }
@@ -70,9 +67,7 @@ public class ControlFragment extends Fragment implements View.OnClickListener, O
     }
 
     @Override
-    public void update(Observable o, Object arg) {
-
-    }
+    public void update(Observable o, Object arg) { }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -146,4 +141,5 @@ public class ControlFragment extends Fragment implements View.OnClickListener, O
     public void setCwpControlNull() {
         this.cwpControl = null;
     }
+
 }

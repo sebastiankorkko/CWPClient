@@ -5,7 +5,6 @@ import android.util.Log;
 
 import com.korkkosebastian.cwpclient.model.CWPMessaging;
 
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -19,7 +18,8 @@ import java.util.concurrent.Semaphore;
 
 public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Runnable {
 
-    public enum CWPState {Disconnected, Connected, LineUp, LineDown };
+
+    public enum CWPState {Disconnected, Connected, LineUp, LineDown }
 
     private final int RESERVED_VALUE = -2147483648;
     private static final String TAG = "CWPProtocol";
@@ -45,8 +45,6 @@ public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Run
     private InputStream nis = null;
     private OutputStream nos = null;
 
-    private ByteBuffer outBufffer = null;
-
     private Semaphore lock = new Semaphore(1);
 
     public CWPProtocolImplementation(CWPProtocolListener cwpProtocolListener) {
@@ -54,9 +52,7 @@ public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Run
     }
 
     @Override
-    public void addObserver(Observer observer) {
-
-    }
+    public void addObserver(Observer observer) { }
 
     @Override
     public void lineUp() throws IOException {
@@ -84,9 +80,7 @@ public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Run
     }
 
     @Override
-    public void deleteObserver(Observer observer) {
-
-    }
+    public void deleteObserver(Observer observer) { }
 
     @Override
     public void lineDown() throws IOException {
@@ -347,7 +341,6 @@ public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Run
 
                         }
                     }
-
                 }catch(IOException e){
                         e.printStackTrace();
                     }
