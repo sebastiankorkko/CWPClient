@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,7 +44,6 @@ public class ControlFragment extends Fragment implements View.OnClickListener, O
 
         toggleButton = (ToggleButton) view.findViewById(R.id.connectionToggleButton);
         toggleButton.setOnClickListener(this);
-        toggleButton.setChecked(false);
 
         changeFrequencyButton = (Button) view.findViewById(R.id.changeButton);
         changeFrequencyButton.setOnClickListener(this);
@@ -73,11 +73,15 @@ public class ControlFragment extends Fragment implements View.OnClickListener, O
 
     }
 
-    public void updateView() {
-        if(cwpControl.isConnected()) {
-            changeFrequencyButton.setPressed(true);
-        } else {
-            changeFrequencyButton.setPressed(false);
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if(cwpControl != null) {
+            if (cwpControl.isConnected()) {
+                toggleButton.setChecked(true);
+            } else {
+                toggleButton.setChecked(false);
+            }
         }
     }
 
@@ -139,7 +143,6 @@ public class ControlFragment extends Fragment implements View.OnClickListener, O
             this.cwpControl = cwpControl;
             cwpControl.addObserver(this);
         }
-        updateView();
     }
 
     public void setCwpControlNull() {
