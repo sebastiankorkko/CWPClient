@@ -36,4 +36,8 @@ No external dependencies apart from Android and JUnit (currently not used)
 
 ### fix-review -notes ###
 
-- Fixed all issues that were mentioned in the comments. It could be due to fixing few of the other things, but I was not able to replicate the issue with the changed protocol state-issue.
+- Fixed all issues that were mentioned in the comments. It could be due to fixing few of the other things, but I was not able to replicate the issue with the changed protocol state-issue:
+
+![frequency_change.PNG](https://bitbucket.org/repo/x8ArnbG/images/2782467635-frequency_change.PNG)
+
+I also checked it with Wireshark and breakpoints and the client sent the message only once.
