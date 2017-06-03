@@ -246,8 +246,10 @@ public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Run
                         lock.release();
                     }
                 }
+            default:
                 break;
         }
+        Log.d(TAG, "Current state: " + currentState);
     }
 
     private void sendMessage(int msg) throws IOException {
