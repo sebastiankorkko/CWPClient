@@ -183,9 +183,6 @@ public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Run
         } finally {
             lock.release();
         }
-        if(frequencySwitched) {
-            //cwpProtocolListener.onEvent(CWPProtocolListener.CWPEvent.EConnected, 0);
-        }
     }
 
     @Override

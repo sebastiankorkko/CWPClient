@@ -100,11 +100,6 @@ public class CWPService extends Service implements CWPProvider, Observer {
                             .setContentText(getString(R.string.line_disconnected_def));
                     shouldNotify = true;
                     notificationId = 002;
-                } else {
-                    mBuilder.setContentTitle("I'm still running")
-                            .setContentText("Yup");
-                    shouldNotify = true;
-                    notificationId = 003;
                 }
                 if(shouldNotify) {
                     Intent resultIntent = new Intent(this, MainActivity.class);
@@ -146,7 +141,7 @@ public class CWPService extends Service implements CWPProvider, Observer {
         this.clients--;
         if(clients == 0) {
             if (signaller != null) {
-                signaller.setCwpMessagingNull();
+                signaller.setCwpMessagingNullAndSilence();
                 signaller = null;
             }
         }

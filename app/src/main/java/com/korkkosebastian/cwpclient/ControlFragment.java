@@ -82,23 +82,36 @@ public class ControlFragment extends Fragment implements View.OnClickListener, O
             case EChangedFrequency:
                 String newFrequency = Integer.toString(cwpControl.frequency());
                 Toast.makeText(getActivity().getApplicationContext(),
-                        getString(R.string.changed_frequency) + newFrequency, Toast.LENGTH_SHORT).show();
+                        getString(R.string.changed_frequency) + " " + newFrequency, Toast.LENGTH_SHORT).show();
                 break;
+
             default:
                 break;
         }
-
+        if(cwpControl.isConnected()) {
+            if(Integer.toString(cwpControl.frequency()) != frequency) {
+                frequency = Integer.toString(cwpControl.frequency());
+            }
+        }
+        updateView(getView());
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        updateView(view);
+    }
+
+    public void updateView(View view) {
         if(cwpControl != null) {
+            ToggleButton toggle = (ToggleButton) view.findViewById(R.id.connectionToggleButton);
             if (cwpControl.isConnected()) {
-                toggleButton.setChecked(true);
+                toggle.setChecked(true);
             } else {
-                toggleButton.setChecked(false);
+                toggle.setChecked(false);
             }
+            EditText input = (EditText) view.findViewById(R.id.frequencyInput);
+            input.setText(frequency);
         }
     }
 

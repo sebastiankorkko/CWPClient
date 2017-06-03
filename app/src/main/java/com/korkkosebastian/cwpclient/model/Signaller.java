@@ -30,7 +30,8 @@ public class Signaller implements Observer {
         }
     }
 
-    public void setCwpMessagingNull() {
+    public void setCwpMessagingNullAndSilence() {
+        toneGenerator.stopTone();
         this.cwpMessaging.deleteObserver(this);
         this.cwpMessaging = null;
     }

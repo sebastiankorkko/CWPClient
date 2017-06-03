@@ -36,6 +36,6 @@
     <string name="line_connected">Connected to the server</string>
     <string name="line_disconnected">Disconnected</string>
     <string name="line_disconnected_def">CWP Client disconnected</string>
-    <string name="changed_frequency">Changed frequency to </string>
+    <string name="changed_frequency">Current frequency is</string>
 
 </resources>
