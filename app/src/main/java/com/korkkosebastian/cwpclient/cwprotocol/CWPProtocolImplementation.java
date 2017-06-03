@@ -59,7 +59,7 @@ public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Run
         boolean lineSwitchToUp = false;
         try {
             lock.acquire();
-            if((currentState == CWPState.LineDown || currentState != CWPState.LineUp)
+            if((currentState == CWPState.LineDown || currentState == CWPState.LineUp)
                     && !lineUpByUser) {
                 timeStamp = (int)(System.currentTimeMillis()-initTime);
                 sendMessage(timeStamp);
@@ -88,11 +88,11 @@ public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Run
         short lineDownMsg = 0;
         try {
             lock.acquire();
-            if(currentState == CWPState.LineUp || lineUpByUser) {
+            if(currentState == CWPState.LineUp && lineUpByUser) {
                 lineDownMsg = (short)(System.currentTimeMillis() - initTime - timeStamp);
                 sendMessage(lineDownMsg);
                 lineUpByUser = false;
-                if(lineIsUp()) {
+                if(!lineUpByServer) {
                     currentState = CWPState.LineDown;
                     lineSwitchToDown = true;
                 }
@@ -215,6 +215,7 @@ public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Run
                     currentState = nextState;
                     lock.release();
                     cwpProtocolListener.onEvent(CWPProtocolListener.CWPEvent.ELineup, tempMessageValue);
+                    lineUpByServer = true;
                 } else {
                     lock.release();
                 }
