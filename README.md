@@ -33,3 +33,7 @@ No external dependencies apart from Android and JUnit (currently not used)
      * Issue with networking in API 25, have not had the time to fix it by implementing separate threading for sending data.
      * Random issue, where the top bar and the menu-button went missing when coming back to the app from the OS. Was unable to replicate the issue with consistency and may be present.
 * I was running out of time so some aspects are lacking as I prioritized the functionality of the program over documentation (code commenting) and textual UI notifications.
+
+### fix-review -notes ###
+
+- Fixed all issues that were mentioned in the comments. It could be due to fixing few of the other things, but I was not able to replicate the issue with the changed protocol state-issue.
