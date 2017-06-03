@@ -134,6 +134,11 @@ public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Run
         cwpConnectionReader = null;
         this.serverAddress = null;
         this.serverPort = -1;
+        try {
+            nos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         this.currentFrequency = CWPControl.DEFAULT_FREQUENCY;
         cwpProtocolListener.onEvent(CWPProtocolListener.CWPEvent.EDisconnected, 0);
     }
@@ -179,7 +184,7 @@ public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Run
             lock.release();
         }
         if(frequencySwitched) {
-            cwpProtocolListener.onEvent(CWPProtocolListener.CWPEvent.EConnected, 0);
+            //cwpProtocolListener.onEvent(CWPProtocolListener.CWPEvent.EConnected, 0);
         }
     }
 
@@ -292,6 +297,12 @@ public class CWPProtocolImplementation  implements CWPControl, CWPMessaging, Run
 
         public void stopReading() throws InterruptedException {
             running = false;
+            try {
+                nis.close();
+                cwpSocket.close();
+            } catch(IOException e) {
+                e.printStackTrace();
+            }
             changeProtocolState(CWPState.Disconnected, 0);
         }
 

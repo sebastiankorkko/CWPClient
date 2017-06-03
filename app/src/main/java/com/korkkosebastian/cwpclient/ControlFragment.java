@@ -15,6 +15,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.korkkosebastian.cwpclient.cwprotocol.CWPControl;
+import com.korkkosebastian.cwpclient.cwprotocol.CWPProtocolListener;
 
 import java.io.IOException;
 import java.util.Observable;
@@ -67,7 +68,27 @@ public class ControlFragment extends Fragment implements View.OnClickListener, O
     }
 
     @Override
-    public void update(Observable o, Object arg) { }
+    public void update(Observable o, Object arg) {
+        CWPProtocolListener.CWPEvent event = (CWPProtocolListener.CWPEvent) arg;
+        switch(event) {
+            case EConnected:
+                Toast.makeText(getActivity().getApplicationContext(),
+                        getString(R.string.line_connected), Toast.LENGTH_SHORT).show();
+                break;
+            case EDisconnected:
+                Toast.makeText(getActivity().getApplicationContext(),
+                        getString(R.string.line_disconnected), Toast.LENGTH_SHORT).show();
+                break;
+            case EChangedFrequency:
+                String newFrequency = Integer.toString(cwpControl.frequency());
+                Toast.makeText(getActivity().getApplicationContext(),
+                        getString(R.string.changed_frequency) + newFrequency, Toast.LENGTH_SHORT).show();
+                break;
+            default:
+                break;
+        }
+
+    }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {

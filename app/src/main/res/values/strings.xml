@@ -33,6 +33,9 @@
     <!-- Notification strings -->
     <string name="line_is_up">Line is up</string>
     <string name="line_is_up_def">The server sent line up-signal</string>
+    <string name="line_connected">Connected to the server</string>
     <string name="line_disconnected">Disconnected</string>
     <string name="line_disconnected_def">CWP Client disconnected</string>
+    <string name="changed_frequency">Changed frequency to </string>
+
 </resources>
