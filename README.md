@@ -3,7 +3,6 @@
 ### What is this repository for? ###
 
 * CWP Client application
-* Student: Sebastian Körkkö (2003063) - korkkosebastian@gmail.com
 
 ### How do I get set up? ###
 
